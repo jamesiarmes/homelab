@@ -1,0 +1,5 @@
+- name: Configure Proxmox Host
+  hosts: proxmox
+  become: true
+  roles:
+    - nfs_server

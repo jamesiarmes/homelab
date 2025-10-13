@@ -1,0 +1,13 @@
+# Proxmox Host Configuration
+proxmox_host_ip: "{{ lookup('env', 'PROXMOX_HOST_IP') }}"
+nfs_clients: "{{ lookup('env', 'K8_SUBNET_CIDR') }}"
+nfs_shares:
+  - jellyfin-config
+  - jellyfin-media
+
+# Kubernetes Cluster Configuration
+k8s_node_subnet: "{{ lookup('env', 'K8_SUBNET_CIDR') }}"
+metallb_ip_range: "{{ lookup('env', 'METALLB_IP_RANGE') }}"
+
+# Application Configuration
+jellyfin_lb_ip: "{{ lookup('env', 'JELLYFIN_LB_IP') }}"

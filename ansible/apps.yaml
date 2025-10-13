@@ -1,0 +1,6 @@
+- name: Deploy Kubernetes Applications
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - jellyfin

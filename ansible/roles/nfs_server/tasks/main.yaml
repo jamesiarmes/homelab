@@ -1,0 +1,35 @@
+- name: Update apt cache and install nfs-kernel-server
+  ansible.builtin.apt:
+    name: nfs-kernel-server
+    state: present
+    autoclean: true
+    autoremove: true
+    update_cache: true
+
+- name: Create NFS share directories
+  ansible.builtin.file:
+    path: "/exports/{{ nfs_server_share }}"
+    state: directory
+    mode: '0777'
+    owner: nobody
+    group: nogroup
+  loop: "{{ nfs_shares }}"
+  loop_control:
+    loop_var: nfs_server_share
+
+# TODO: Support multiple client addresses.
+- name: Configure NFS exports
+  ansible.builtin.lineinfile:
+    path: /etc/exports
+    line: "/exports/{{ nfs_server_share }} {{ nfs_clients }}(rw,sync,no_subtree_check,no_root_squash)"
+    state: present
+  loop: "{{ nfs_shares }}"
+  loop_control:
+    loop_var: nfs_server_share
+  notify: Restart NFS Server
+
+- name: Ensure NFS server is started and enabled
+  ansible.builtin.service:
+    name: nfs-kernel-server
+    state: started
+    enabled: true

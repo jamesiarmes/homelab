@@ -1,0 +1,39 @@
+- name: Add the nfs-subdir-external-provisioner Helm repo
+  kubernetes.core.helm_repository:
+    name: nfs-subdir-external-provisioner
+    repo_url: "https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/"
+    state: present
+
+- name: Update Helm repositories
+  ansible.builtin.command: helm repo update
+  changed_when: false
+
+- name: Deploy 'nfs-jellyfin-config' provisioner
+  kubernetes.core.helm:
+    name: nfs-jellyfin-config-provisioner
+    chart_ref: nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+    release_namespace: kube-system
+    update_repo_cache: true
+    state: present
+    values:
+      nfs:
+        server: "{{ proxmox_host_ip }}"
+        path: /export/jellyfin-config
+      storageClass:
+        name: nfs-jellyfin-config
+        provisionerName: k8s-sigs.io/nfs-subdir-external-provisioner-config
+
+- name: Deploy 'nfs-jellyfin-media' provisioner
+  kubernetes.core.helm:
+    name: nfs-jellyfin-media-provisioner
+    chart_ref: nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+    release_namespace: kube-system
+    state: present
+    update_repo_cache: true
+    values:
+      nfs:
+        server: "{{ proxmox_host_ip }}"
+        path: /export/jellyfin-media
+      storageClass:
+        name: nfs-jellyfin-media
+        provisionerName: k8s-sigs.io/nfs-subdir-external-provisioner-media

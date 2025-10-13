@@ -1,0 +1,37 @@
+name: Run ansible-lint
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  security-events: write
+  contents: read
+
+jobs:
+  lint:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+          cache: pip
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+      - name: Install Ansible dependencies
+        run: ansible-galaxy install -r ansible/requirements.yaml
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@v25
+        with:
+          args: -v
+          requirements_file: ansible/requirements.yaml
+      # When run on main, upload the SARIF file to GitHub.
+      - name: Upload SARIF result
+        if: always() && github.ref == 'refs/heads/main'
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ansible-lint.sarif

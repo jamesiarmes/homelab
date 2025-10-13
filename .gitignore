@@ -1,0 +1,8 @@
+.env
+_out
+*.sarif
+.idea
+*.iml
+.ansible
+.venv
+kubeconfig
