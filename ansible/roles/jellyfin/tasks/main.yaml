@@ -1,0 +1,32 @@
+- name: Make sure the media namespace exists
+  kubernetes.core.k8s:
+    name: media
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Add the Jellyfin Helm repo
+  kubernetes.core.helm_repository:
+    name: jellyfin
+    repo_url: https://jellyfin.github.io/jellyfin-helm
+    state: present
+
+- name: Create Persistent Volume Claims for media
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ role_path }}/files/jellyfin-media-pvcs.yaml"
+
+- name: Create UDP discovery service for Jellyfin
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'jellyfin-udp-service.yaml.j2') | from_yaml }}"
+
+
+- name: Deploy Jellyfin via Helm chart
+  kubernetes.core.helm:
+    name: jellyfin
+    chart_ref: jellyfin/jellyfin
+    release_namespace: media
+    create_namespace: true
+    state: present
+    values: "{{ jellyfin_helm_values }}"

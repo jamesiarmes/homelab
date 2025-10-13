@@ -1,0 +1,44 @@
+- name: Apply MetalLB installation manifest
+  kubernetes.core.k8s:
+    state: present
+    # TODO: Can we get the latest version? Or add the version as a variable?
+    src: https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
+
+- name: Wait for MetalLB controller deployment to be available
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: controller
+    namespace: metallb-system
+    wait: true
+    wait_timeout: 300
+    wait_condition:
+      type: Available
+      status: "True"
+  register: metallb_deployment
+  until: metallb_deployment.resources | length > 0
+  retries: 10
+  delay: 15
+
+- name: Configure MetalLB with IPAddressPool and L2Advertisement
+  kubernetes.core.k8s:
+    state: present
+    definition: |
+      ---
+      apiVersion: metallb.io/v1beta1
+      kind: IPAddressPool
+      metadata:
+        name: default-pool
+        namespace: metallb-system
+      spec:
+        addresses:
+          - {{ metallb_ip_range }}
+      ---
+      apiVersion: metallb.io/v1beta1
+      kind: L2Advertisement
+      metadata:
+        name: default-advertisement
+        namespace: metallb-system
+      spec:
+        ipAddressPools:
+          - default-pool
