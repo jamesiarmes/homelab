@@ -26,9 +26,7 @@ This role performs the following sequence of actions:
 This role requires the following variables to be defined, typically in
 `group_vars/all.yaml`:
 
-
-  
-- `macvlan_subnet_cidr`: The CIDR notation for your local LAN subnet. This is
+- `cni_plugins_subnet_cidr`: The CIDR notation for your local LAN subnet. This is
   used by the macvlan IPAM (IP Address Management) plugin to correctly configure
   the secondary network interfaces on your pods.
 
@@ -40,15 +38,15 @@ This role provides a set of optional variables with default values in
 [`defaults/main.yaml`][defaults]. You can override any of these values in your
 `group_vars` or `host_vars` to customize the deployment.
 
-- `macvlan_master_interface`: The name of the primary physical network interface
-  on the host that the Kubernetes node VMs are bridged to (e.g., eth0, enp6s0).
-  This interface is used by macvlan as the parent to attach pod interfaces
-  directly to the LAN.
+- `cni_plugins_master_interface`: The name of the primary physical network
+  interface on the host that the Kubernetes node VMs are bridged to (e.g., eth0,
+  enp6s0). This interface is used by macvlan as the parent to attach pod
+  interfaces directly to the LAN.
 
   - Example: `eth0`
 
-- `macvlan_version`: The version of the Multus macvlan CNI plugin to install.
-  This must be a valid, full semantic version string.
+- `cni_plugins_macvlan_version`: The version of the Multus macvlan CNI plugin to
+  install. This must be a valid, full semantic version string.
 
   - Example: `4.2.2`
 

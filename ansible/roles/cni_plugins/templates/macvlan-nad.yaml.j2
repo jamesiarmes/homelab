@@ -7,10 +7,10 @@ spec:
   config: '{
       "cniVersion": "0.3.1",
       "type": "macvlan",
-      "master": "{{ macvlan_master_interface }}",
+      "master": "{{ cni_plugins_master_interface }}",
       "mode": "bridge",
       "ipam": {
         "type": "host-local",
-        "subnet": "{{ macvlan_subnet_cidr }}"
+        "subnet": "{{ cni_plugins_subnet_cidr }}"
       }
     }'

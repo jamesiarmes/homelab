@@ -21,7 +21,7 @@
 - name: Install Multus CNI daemonset
   kubernetes.core.k8s:
     state: present
-    src: "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v{{ macvlan_version }}/deployments/multus-daemonset.yml"
+    src: "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v{{ cni_plugins_macvlan_version }}/deployments/multus-daemonset.yml"
 
 - name: Create Macvlan NetworkAttachmentDefinition
   kubernetes.core.k8s:
