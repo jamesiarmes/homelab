@@ -3,5 +3,6 @@
   connection: local
   gather_facts: false
   roles:
+    - cni_plugins
     - nfs_provisioner
     - metallb

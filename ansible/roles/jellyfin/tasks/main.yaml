@@ -28,5 +28,6 @@
     chart_ref: jellyfin/jellyfin
     release_namespace: media
     create_namespace: true
+    update_repo_cache: true
     state: present
     values: "{{ jellyfin_helm_values }}"

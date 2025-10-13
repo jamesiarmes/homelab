@@ -51,6 +51,8 @@ The automation is designed to be run in a specific sequence, as the layers build
 
 ## Role Descriptions
 
+- [**`cni_plugins`**][cni-plugins]: Installs and configure CNI plugins on the
+  Kubernetes nodes to enable advanced networking for pods.
 - [**`jellyfin`**][jellyfin]: Deploys the Jellyfin media server. This role
   manages the necessary Kubernetes resources, including `PersistentVolumeClaims`
   and `Services`, and deploys the application using the official Helm chart.
@@ -64,6 +66,7 @@ The automation is designed to be run in a specific sequence, as the layers build
   server, creating and exporting the necessary directories for Kubernetes
   persistent storage.
 
+[cni-plugins]: roles/cni_plugins/README.md
 [jellyfin]: roles/jellyfin/README.md
 [metallb]: roles/metallb/README.md
 [nfs-provisioner]: roles/nfs_provisioner/README.md

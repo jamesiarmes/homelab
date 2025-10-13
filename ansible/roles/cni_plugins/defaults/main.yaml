@@ -1,0 +1,2 @@
+cni_plugins_master_interface: eth0
+cni_plugins_macvlan_version: 4.2.2
