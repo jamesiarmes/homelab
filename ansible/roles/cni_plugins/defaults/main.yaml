@@ -1,0 +1,2 @@
+macvlan_master_interface: eth0
+macvlan_version: 4.2.2

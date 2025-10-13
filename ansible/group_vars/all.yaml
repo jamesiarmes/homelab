@@ -7,6 +7,7 @@ nfs_shares:
 
 # Kubernetes Cluster Configuration
 k8s_node_subnet: "{{ lookup('env', 'K8_SUBNET_CIDR') }}"
+macvlan_subnet_cidr: "{{ lookup('env', 'MACVLAN_SUBNET_CIDR') }}"
 metallb_ip_range: "{{ lookup('env', 'METALLB_IP_RANGE') }}"
 
 # Application Configuration
