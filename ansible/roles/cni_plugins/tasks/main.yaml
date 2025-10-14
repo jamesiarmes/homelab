@@ -46,7 +46,7 @@
     src: "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v{{ cni_plugins_macvlan_version }}/deployments/multus-daemonset.yml"
 
 # TODO: According to the Talos docs, this shouldn't be necessary anymore, but
-# without it, maacvlan isn't found. Investigate further.
+# without it, macvlan isn't found. Investigate further.
 - name: Add an init container to the Multus DaemonSet to install CNI drivers.
   kubernetes.core.k8s:
     state: present

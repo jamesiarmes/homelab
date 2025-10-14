@@ -12,7 +12,7 @@ This role performs the following sequence of actions:
   [eBPF].
 - Installs [Multus]: Deploys Multus CNI, a "meta-plugin" that allows pods to be
   attached to multiple network interfaces.
-- Installs network drivers: Creates an init contiainer that ensures pods have
+- Installs network drivers: Creates an init container that ensures pods have
   the necessary network drivers installed.
 - Configures [Macvlan]: Creates a `NetworkAttachmentDefinition` for a macvlan
   network. This allows pods to have a secondary network interface with its own
