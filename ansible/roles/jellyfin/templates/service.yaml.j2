@@ -3,8 +3,6 @@ kind: Service
 metadata:
   name: jellyfin
   namespace: media
-  annotations:
-    metallb.universe.tf/allow-shared-ip: jellyfin-media
 spec:
   type: LoadBalancer
   loadBalancerIP: {{ jellyfin_lb_ip }}
@@ -16,25 +14,3 @@ spec:
       port: {{ jellyfin_lb_port }}
       protocol: TCP
       targetPort: http
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: jellyfin-discovery
-  namespace: media
-  annotations:
-    metallb.universe.tf/allow-shared-ip: jellyfin-media
-spec:
-  type: LoadBalancer
-  loadBalancerIP: {{ jellyfin_lb_ip }}
-  selector:
-    app.kubernetes.io/instance: jellyfin
-    app.kubernetes.io/name: jellyfin
-  ports:
-    # TODO: Get these working.
-    - name: client-discovery
-      port: 7359
-      protocol: UDP
-    - name: dlna-discovery
-      port: 1900
-      protocol: UDP

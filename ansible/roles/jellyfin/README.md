@@ -8,9 +8,10 @@ This role deploys the [Jellyfin] media server to a Kubernetes cluster using the
 This role assumes the following have already been configured on the Kubernetes
 cluster:
 
--  A functional NFS storage backend with two `StorageClass` objects named
-   `nfs-config` and `nfs-media`.
--  MetalLB installed and configured to provide `LoadBalancer` services.
+- A functional NFS storage backend with two `StorageClass` objects named
+  `nfs-config` and `nfs-media`.
+- MetalLB installed and configured to provide `LoadBalancer` services.
+- A CNI plugin installed with support for Multus with `macvlan`.
 
 ## Role Variables
 
