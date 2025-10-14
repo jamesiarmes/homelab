@@ -2,15 +2,20 @@ apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
   name: macvlan-conf
-  namespace: kube-system # Good practice to keep NADs in kube-system
+  namespace: kube-system
 spec:
-  config: '{
+  config: |
+    {
       "cniVersion": "0.3.1",
       "type": "macvlan",
-      "master": "{{ cni_plugins_master_interface }}",
+      "name": "macvlan-conf",
+      "master": "{{ cni_plugins_macvlan_interface }}",
       "mode": "bridge",
+      "mtu": 1500,
       "ipam": {
         "type": "host-local",
-        "subnet": "{{ cni_plugins_subnet_cidr }}"
-      }
-    }'
+        "subnet": "{{ cni_plugins_subnet_cidr }}",
+        "routes": [{"dst": "224.0.0.0/4"}]
+      },
+      "gateway": "{{ cni_plugins_macvlan_gateway }}"
+    }

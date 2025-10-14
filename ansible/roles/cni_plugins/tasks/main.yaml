@@ -17,11 +17,54 @@
       # Required to allow Multus to co-exist
       cni:
         exclusive: false
+      # Force cleanup of old CNI state on first install
+      preflight:
+        cleanBPFState: true
+      # Define Talos-compatible security capabilities, excluding SYS_MODULE
+      securityContext:
+        capabilities:
+          ciliumAgent:
+            - CHOWN
+            - KILL
+            - NET_ADMIN
+            - NET_RAW
+            - IPC_LOCK
+            - SYS_ADMIN
+            - SYS_RESOURCE
+            - DAC_OVERRIDE
+            - FOWNER
+            - SETGID
+            - SETUID
+          cleanCiliumState:
+            - NET_ADMIN
+            - SYS_ADMIN
+            - SYS_RESOURCE
 
 - name: Install Multus CNI daemonset
   kubernetes.core.k8s:
     state: present
     src: "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/v{{ cni_plugins_macvlan_version }}/deployments/multus-daemonset.yml"
+
+# TODO: According to the Talos docs, this shouldn't be necessary anymore, but
+# without it, macvlan isn't found. Investigate further.
+- name: Add an init container to the Multus DaemonSet to install CNI drivers.
+  kubernetes.core.k8s:
+    state: present
+    merge_type: strategic-merge
+    src: multus-daemon-set-init.yaml
+
+- name: Wait for Multus DaemonSet to be ready on all nodes
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: DaemonSet
+    name: kube-multus-ds
+    namespace: kube-system
+  register: cni_plugins_multus_ds
+  until: cni_plugins_multus_ds.resources | length > 0 and
+    cni_plugins_multus_ds.resources[0].status.numberReady ==
+    cni_plugins_multus_ds.resources[0].status.desiredNumberScheduled
+  retries: 30
+  delay: 10
 
 - name: Create Macvlan NetworkAttachmentDefinition
   kubernetes.core.k8s:
