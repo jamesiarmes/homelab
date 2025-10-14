@@ -15,7 +15,7 @@
   kubernetes.core.k8s:
     apply: true
     state: present
-    definition: "{{ lookup('template', 'service.yaml.j2') | from_yaml_all }}"
+    definition: "{{ lookup('template', 'service.yaml.j2') | from_yaml }}"
 
 - name: Deploy Jellyfin via manifest
   kubernetes.core.k8s:
