@@ -59,10 +59,10 @@
     kind: DaemonSet
     name: kube-multus-ds
     namespace: kube-system
-  register: multus_ds
-  until: multus_ds.resources | length > 0 and
-    multus_ds.resources[0].status.numberReady ==
-    multus_ds.resources[0].status.desiredNumberScheduled
+  register: cni_plugins_multus_ds
+  until: cni_plugins_multus_ds.resources | length > 0 and
+    cni_plugins_multus_ds.resources[0].status.numberReady ==
+    cni_plugins_multus_ds.resources[0].status.desiredNumberScheduled
   retries: 30
   delay: 10
 
