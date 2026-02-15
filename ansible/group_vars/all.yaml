@@ -12,3 +12,4 @@ metallb_ip_range: "{{ lookup('env', 'METALLB_IP_RANGE') }}"
 
 # Application Configuration
 jellyfin_lb_ip: "{{ lookup('env', 'JELLYFIN_LB_IP') }}"
+jellyfin_published_url: "{{ lookup('env', 'JELLYFIN_LB_IP') }}"
