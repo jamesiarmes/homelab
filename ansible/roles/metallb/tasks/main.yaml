@@ -1,8 +1,7 @@
 - name: Apply MetalLB installation manifest
   kubernetes.core.k8s:
     state: present
-    # TODO: Can we get the latest version? Or add the version as a variable?
-    src: https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
+    src: https://raw.githubusercontent.com/metallb/metallb/v{{ metallb_version }}/config/manifests/metallb-native.yaml
 
 - name: Wait for MetalLB controller deployment to be available
   kubernetes.core.k8s_info:
@@ -42,3 +41,7 @@
       spec:
         ipAddressPools:
           - default-pool
+  register: metallb_configure
+  until: metallb_configure is succeeded
+  retries: 3
+  delay: 10
