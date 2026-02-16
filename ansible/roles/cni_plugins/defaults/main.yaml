@@ -1,3 +1,4 @@
+cni_plugins_cilium_version: 1.19.0
 cni_plugins_macvlan_gateway: 192.168.1.1
 cni_plugins_macvlan_interface: eth0
-cni_plugins_macvlan_version: 4.2.2
+cni_plugins_macvlan_version: 4.2.3

@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -29,9 +29,8 @@ jobs:
         with:
           args: -v
           requirements_file: ansible/requirements.yaml
-      # When run on main, upload the SARIF file to GitHub.
       - name: Upload SARIF result
-        if: always() && github.ref == 'refs/heads/main'
+        if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ansible-lint.sarif
