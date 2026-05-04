@@ -1,0 +1,2 @@
+media_storage_mount_point: "/mnt/media"
+media_storage_fstype: "xfs"

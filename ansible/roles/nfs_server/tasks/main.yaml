@@ -8,7 +8,7 @@
 
 - name: Create NFS share directories
   ansible.builtin.file:
-    path: "/exports/{{ nfs_server_share }}"
+    path: "/export/{{ nfs_server_share }}"
     state: directory
     mode: '0777'
     owner: nobody
@@ -21,7 +21,7 @@
 - name: Configure NFS exports
   ansible.builtin.lineinfile:
     path: /etc/exports
-    line: "/exports/{{ nfs_server_share }} {{ nfs_clients }}(rw,sync,no_subtree_check,no_root_squash)"
+    line: "/export/{{ nfs_server_share }} {{ nfs_clients }}(rw,sync,no_subtree_check,no_root_squash)"
     state: present
   loop: "{{ nfs_shares }}"
   loop_control:

@@ -3,3 +3,4 @@
   become: true
   roles:
     - nfs_server
+    - media_storage

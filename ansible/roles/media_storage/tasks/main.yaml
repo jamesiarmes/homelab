@@ -1,0 +1,60 @@
+# When neither device nor UUID is set, skip this role (e.g. host has no external
+# drive).
+- name: Set media_storage_configured when device or UUID is set
+  ansible.builtin.set_fact:
+    media_storage_configured: "{{ (media_storage_device is defined and media_storage_device != '') or (media_storage_uuid is defined and media_storage_uuid != '') }}"
+
+- name: Ensure base directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - /export
+    - "{{ media_storage_mount_point }}"
+  when: media_storage_configured | default(false) | bool
+
+- name: Get UUID of media storage device
+  ansible.builtin.command: blkid -s UUID -o value "{{ media_storage_device }}"
+  register: media_storage_blkid
+  changed_when: false
+  when: media_storage_device is defined and media_storage_device != "" and (media_storage_uuid is not defined or media_storage_uuid == "")
+
+- name: Set fstab source for media drive
+  ansible.builtin.set_fact:
+    media_storage_fstab_src: "{{ 'UUID=' + media_storage_uuid if (media_storage_uuid is defined and media_storage_uuid != '') else ('UUID=' + media_storage_blkid.stdout if (media_storage_blkid is defined and media_storage_blkid.rc == 0 and (media_storage_blkid.stdout | length > 0)) else media_storage_device) }}"
+  when: media_storage_configured | default(false) | bool
+
+- name: Mount media drive
+  ansible.builtin.mount:
+    path: "{{ media_storage_mount_point }}"
+    src: "{{ media_storage_fstab_src }}"
+    fstype: "{{ media_storage_fstype }}"
+    opts: defaults,nofail
+    state: mounted
+  when: media_storage_fstab_src is defined
+
+- name: Ensure jellyfin-media directory exists on drive
+  ansible.builtin.file:
+    path: "{{ media_storage_mount_point }}/jellyfin-media"
+    state: directory
+    mode: "0777"
+  when: media_storage_fstab_src is defined
+
+- name: Ensure /export/jellyfin-media exists as mount point
+  ansible.builtin.file:
+    path: /export/jellyfin-media
+    state: directory
+    mode: "0755"
+  notify: Restart NFS Server
+  when: media_storage_configured | default(false) | bool
+
+- name: Add bind mount for jellyfin-media to fstab
+  ansible.builtin.mount:
+    path: /export/jellyfin-media
+    src: "{{ media_storage_mount_point }}/jellyfin-media"
+    fstype: none
+    opts: bind,nofail
+    state: mounted
+  notify: Restart NFS Server
+  when: media_storage_configured | default(false) | bool
