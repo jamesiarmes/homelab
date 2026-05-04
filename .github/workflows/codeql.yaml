@@ -25,9 +25,6 @@ jobs:
         include:
           - language: actions
             build_mode: none
-          # We use JavaScript to analyze JSON and YAML files.
-          - language: javascript-typescript
-            build_mode: none
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
