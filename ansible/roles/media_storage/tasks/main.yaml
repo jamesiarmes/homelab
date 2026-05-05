@@ -2,31 +2,53 @@
 # drive).
 - name: Set media_storage_configured when device or UUID is set
   ansible.builtin.set_fact:
-    media_storage_configured: "{{ (media_storage_device is defined and media_storage_device != '') or (media_storage_uuid is defined and media_storage_uuid != '') }}"
+    media_storage_configured: >-
+      {{
+        (media_storage_device is defined and media_storage_device | length > 0)
+        or (media_storage_uuid is defined and media_storage_uuid | length > 0)
+      }}
 
 - name: Ensure base directories exist
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ media_storage_dir }}"
     state: directory
     mode: "0755"
   loop:
     - /export
     - "{{ media_storage_mount_point }}"
+  loop_control:
+    loop_var: media_storage_dir
   when: media_storage_configured | default(false) | bool
 
 - name: Get UUID of media storage device
   ansible.builtin.command: blkid -s UUID -o value "{{ media_storage_device }}"
   register: media_storage_blkid
   changed_when: false
-  when: media_storage_device is defined and media_storage_device != "" and (media_storage_uuid is not defined or media_storage_uuid == "")
+  when:
+    - media_storage_device is defined
+    - media_storage_device | length > 0
+    - media_storage_uuid is not defined or media_storage_uuid | length == 0
 
 - name: Set fstab source for media drive
   ansible.builtin.set_fact:
-    media_storage_fstab_src: "{{ 'UUID=' + media_storage_uuid if (media_storage_uuid is defined and media_storage_uuid != '') else ('UUID=' + media_storage_blkid.stdout if (media_storage_blkid is defined and media_storage_blkid.rc == 0 and (media_storage_blkid.stdout | length > 0)) else media_storage_device) }}"
+    media_storage_fstab_src: >-
+      {{
+        ('UUID=' + media_storage_uuid)
+        if (media_storage_uuid is defined and media_storage_uuid | length > 0)
+        else (
+          'UUID=' + media_storage_blkid.stdout
+          if (
+            media_storage_blkid is defined
+            and media_storage_blkid.rc == 0
+            and media_storage_blkid.stdout | length > 0
+          )
+          else media_storage_device
+        )
+      }}
   when: media_storage_configured | default(false) | bool
 
 - name: Mount media drive
-  ansible.builtin.mount:
+  ansible.posix.mount:
     path: "{{ media_storage_mount_point }}"
     src: "{{ media_storage_fstab_src }}"
     fstype: "{{ media_storage_fstype }}"
@@ -50,7 +72,7 @@
   when: media_storage_configured | default(false) | bool
 
 - name: Add bind mount for jellyfin-media to fstab
-  ansible.builtin.mount:
+  ansible.posix.mount:
     path: /export/jellyfin-media
     src: "{{ media_storage_mount_point }}/jellyfin-media"
     fstype: none
