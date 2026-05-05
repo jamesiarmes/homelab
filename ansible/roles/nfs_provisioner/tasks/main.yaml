@@ -16,8 +16,6 @@
     release_namespace: kube-system
     update_repo_cache: true
     state: present
-    # TODO:Replace this once kubernetes.core.helm supports Helm v4.
-    binary_path: "{{ playbook_dir }}/../bin/helm"
     values:
       nfs:
         server: "{{ proxmox_host_ip }}"
@@ -34,8 +32,6 @@
     release_namespace: kube-system
     state: present
     update_repo_cache: true
-    # TODO:Replace this once kubernetes.core.helm supports Helm v4.
-    binary_path: "{{ playbook_dir }}/../bin/helm"
     values:
       nfs:
         server: "{{ proxmox_host_ip }}"

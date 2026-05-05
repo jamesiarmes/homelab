@@ -12,8 +12,6 @@
     release_namespace: kube-system
     update_repo_cache: true
     state: present
-    # TODO:Replace this once kubernetes.core.helm supports Helm v4.
-    binary_path: "{{ playbook_dir }}/../bin/helm"
     values:
       # Required to replace kube-proxy
       kubeProxyReplacement: true
