@@ -5,6 +5,13 @@ nfs_shares:
   - jellyfin-config
   - jellyfin-media
 
+# External media drive (media_storage role). Set in host_vars for the Proxmox host
+# that has the drive, or here if all hosts have it.
+# media_storage_device: "/dev/sdb1"   # partition to mount (e.g. from lsblk)
+# media_storage_uuid: ""             # optional: use UUID in fstab (from blkid)
+media_storage_device: "/dev/sda1"
+media_storage_uuid: 33616e0f-9e3d-4050-b88a-3cf98b913b3b
+
 # Kubernetes Cluster Configuration
 cni_plugins_subnet_cidr: "{{ lookup('env', 'K8_SUBNET_CIDR') }}"
 k8s_node_subnet: "{{ lookup('env', 'K8_SUBNET_CIDR') }}"
